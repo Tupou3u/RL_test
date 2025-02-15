@@ -23,14 +23,13 @@ class MLPAgent(nn.Module):
             nn.Tanh(),
         )
         self.actor_mean = layer_init(nn.Linear(LAYER_SIZE, action_dim), std=0.01)
-        self.actor_logstd = nn.Parameter(torch.zeros(1, action_dim)) 
+        self.actor_logstd = nn.Parameter(torch.zeros(1, action_dim))
         self.critic = layer_init(nn.Linear(LAYER_SIZE, 1), std=1.0)
 
     def get_action(self, x):
         hidden = self.network(x)
         action_mean = self.actor_mean(hidden)
-        action_logstd = self.actor_logstd.expand_as(action_mean)
-        action_std = torch.exp(action_logstd)
+        action_std = torch.exp(self.actor_logstd(hidden))
         probs = Normal(action_mean, action_std)
         return probs.sample()
 
@@ -47,7 +46,8 @@ class MLPAgent(nn.Module):
         if action is None:
             action = probs.sample()
         return action, self.critic(hidden).squeeze(), probs.log_prob(action).sum(1), probs.entropy().sum(1)
-
+    
+    
 class PPO_MLP:
     def __init__(self, 
             state_dim: int = None,

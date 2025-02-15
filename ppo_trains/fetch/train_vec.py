@@ -25,7 +25,7 @@ def make_env(env_id):
     return thunk
 
 if __name__ == '__main__':
-    ENV_ID = 'FetchPickAndPlaceDense-v4' 
+    ENV_ID = 'FetchReachDense-v4' 
     NUM_ENVS = 10
     envs = gym.vector.AsyncVectorEnv(
         [make_env(ENV_ID) for i in range(NUM_ENVS)]
@@ -49,7 +49,7 @@ if __name__ == '__main__':
         ent_coef = 0.001,      
         alpha = 0.1,                    
         device = DEVICE,
-        log_dir = SAVE_PATH
+        # log_dir = SAVE_PATH
     ) 
 
     start_time = time.time()

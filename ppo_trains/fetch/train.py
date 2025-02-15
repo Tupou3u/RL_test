@@ -35,7 +35,7 @@ if __name__ == '__main__':
         ent_coef = 0.001,      
         alpha = 0.1,                    
         device = TRAIN_DEVICE,
-        log_dir = SAVE_PATH
+        # log_dir = SAVE_PATH
     ) 
 
     start_time = time.time()
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         rollout_model = deepcopy(agent.model).to(ROLLOUT_DEVICE)
         mean_reward, mean_steps, success_count = [], [], 0
 
-        while len(states) < ROLLOUT_LEN:
+        while len(states) < ROLLOUT_LEN + 1:
             state, _ = env.reset()
             next_done = False
             ep_reward, ep_steps = 0, 0
@@ -104,12 +104,12 @@ if __name__ == '__main__':
             print('New best model!')
         
         agent.train(
-            torch.stack(states[:ROLLOUT_LEN-1]).to(TRAIN_DEVICE), 
-            torch.stack(actions[:ROLLOUT_LEN-1]).to(TRAIN_DEVICE), 
-            torch.tensor(rewards[:ROLLOUT_LEN-1], dtype=torch.float32).to(TRAIN_DEVICE), 
-            torch.tensor([True] + next_dones[:ROLLOUT_LEN-1], dtype=torch.float32).to(TRAIN_DEVICE), 
-            torch.tensor(logprobs[:ROLLOUT_LEN-1], dtype=torch.float32).to(TRAIN_DEVICE), 
-            torch.tensor(values[:ROLLOUT_LEN], dtype=torch.float32).to(TRAIN_DEVICE), 
+            torch.stack(states[:ROLLOUT_LEN]).to(TRAIN_DEVICE), 
+            torch.stack(actions[:ROLLOUT_LEN]).to(TRAIN_DEVICE), 
+            torch.tensor(rewards[:ROLLOUT_LEN], dtype=torch.float32).to(TRAIN_DEVICE), 
+            torch.tensor([True] + next_dones[:ROLLOUT_LEN], dtype=torch.float32).to(TRAIN_DEVICE), 
+            torch.tensor(logprobs[:ROLLOUT_LEN], dtype=torch.float32).to(TRAIN_DEVICE), 
+            torch.tensor(values[:ROLLOUT_LEN+1], dtype=torch.float32).to(TRAIN_DEVICE), 
         )
     
 
